@@ -42,7 +42,7 @@ class CacheDecoratorTest extends TestCase
     #[Test]
     public function pureMethodIsCached(): void
     {
-        $key = Sample::class . 'sum' . md5((string)json_encode([2, 3]));
+        $key = $this->generateCacheKey(Sample::class, 'sum', [2, 3]);
 
         $this->cache
             ->expects($this->once())
@@ -63,7 +63,7 @@ class CacheDecoratorTest extends TestCase
     #[Test]
     public function pureMethodUsingCache(): void
     {
-        $key = Sample::class . 'sum' . md5((string)json_encode([2, 3]));
+        $key = $this->generateCacheKey(Sample::class, 'sum', [2, 3]);
 
         $this->cache
             ->expects($this->once())
@@ -83,7 +83,7 @@ class CacheDecoratorTest extends TestCase
     #[Test]
     public function pureMethodWithArrayArguments(): void
     {
-        $key = Sample::class . 'merge' . md5((string)json_encode([[1, 2], [3, 4]]));
+        $key = $this->generateCacheKey(Sample::class, 'merge', [[1, 2], [3, 4]]);
 
         $this->cache
             ->expects($this->once())
@@ -113,7 +113,7 @@ class CacheDecoratorTest extends TestCase
     #[Test]
     public function ttlSetting(): void
     {
-        $key = Sample::class . 'sum' . md5((string)json_encode([2, 3]));
+        $key = $this->generateCacheKey(Sample::class, 'sum', [2, 3]);
 
         $this->cache
             ->expects($this->once())
@@ -126,7 +126,7 @@ class CacheDecoratorTest extends TestCase
     #[Test]
     public function zeroTtlBypassesCache(): void
     {
-        $key = Sample::class . 'sum' . md5((string)json_encode([2, 3]));
+        $key = $this->generateCacheKey(Sample::class, 'sum', [2, 3]);
 
         $this->cache
             ->expects($this->once())
@@ -143,6 +143,14 @@ class CacheDecoratorTest extends TestCase
 
         $result = $this->decorator->ttl(0)->sum(2, 3);
         $this->assertEquals(5, $result);
+    }
+
+    /**
+     * @param array<int|string, mixed> $args
+     */
+    private function generateCacheKey(string $class, string $method, array $args): string
+    {
+        return $class . $method . sha1(serialize($args));
     }
 }
 
