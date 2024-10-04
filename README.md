@@ -22,6 +22,7 @@ composer require fuwasegu/cache-decorator
 > [!CAUTION]
 > Since serialization costs can be high, caching should primarily be applied to I/O bottleneck scenarios, 
 > such as HTTP communication and relational database interactions. 
+> It is also useful for computationally expensive algorithms (e.g., full search).
 > 
 > Moreover, the caching driver should utilize lighter options like Redis or Memcached instead of relying on the heavier I/O operations to achieve expected performance improvements.
 

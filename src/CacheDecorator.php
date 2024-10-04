@@ -96,11 +96,7 @@ class CacheDecorator
      */
     private function generateCacheKey(string $class, string $method, array $args): string
     {
-        if (false === $json = json_encode($args)) {
-            throw new LogicException('The arguments must be able to be encoded as JSON.');
-        }
-
-        return $class . $method . md5($json);
+        return $class . $method . sha1(serialize($args));
     }
 
     /**
