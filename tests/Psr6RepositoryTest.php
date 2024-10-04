@@ -98,11 +98,29 @@ class Psr6RepositoryTest extends TestCase
     public function invalidArgumentException(): void
     {
         $exception = $this->createMock(PsrInvalidArgumentException::class);
+
+        // get
         $this->cachePool
+            ->expects($this->once())
             ->method('getItem')
             ->willThrowException($exception);
-
         $this->expectException(InvalidArgumentException::class);
         $this->repository->get('invalid_key');
+
+        // set
+        $this->cachePool
+            ->expects($this->once())
+            ->method('getItem')
+            ->willThrowException($exception);
+        $this->expectException(InvalidArgumentException::class);
+        $this->repository->set('invalid_key', 'invalid_value');
+
+        // delete
+        $this->cachePool
+            ->expects($this->once())
+            ->method('deleteItem')
+            ->willThrowException($exception);
+        $this->expectException(InvalidArgumentException::class);
+        $this->repository->delete('invalid_key');
     }
 }
