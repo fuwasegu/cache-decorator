@@ -79,7 +79,7 @@ class Psr16RepositoryTest extends TestCase
      * @throws Exception
      */
     #[Test]
-    public function testInvalidArgumentException(): void
+    public function invalidArgumentException(): void
     {
         $exception = $this->createMock(PsrInvalidArgumentException::class);
         $this->cache
