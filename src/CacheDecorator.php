@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Fuwasegu\CacheDecorator;
 
+use Fuwasegu\CacheDecorator\Repositories\InvalidArgumentException;
+use Fuwasegu\CacheDecorator\Repositories\Psr16Repository;
+use Fuwasegu\CacheDecorator\Repositories\Psr6Repository;
+use Fuwasegu\CacheDecorator\Repositories\Repository;
 use LogicException;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 use ReflectionClass;
 use Throwable;
 
@@ -28,7 +32,7 @@ class CacheDecorator
      */
     private function __construct(
         private readonly mixed $instance,
-        private readonly CacheInterface $cache,
+        private readonly Repository $cache,
     ) {
     }
 
@@ -36,9 +40,17 @@ class CacheDecorator
      * @param  T       $instance
      * @return self<T>
      */
-    public static function wrap(mixed $instance, CacheInterface $cache): self
-    {
-        return new self($instance, $cache);
+    public static function wrap(
+        mixed $instance,
+        CacheInterface|CacheItemPoolInterface $cache,
+    ): self {
+        return new self(
+            $instance,
+            match (true) {
+                $cache instanceof CacheInterface => new Psr16Repository($cache),
+                $cache instanceof CacheItemPoolInterface => new Psr6Repository($cache),
+            },
+        );
     }
 
     /**
