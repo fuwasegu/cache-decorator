@@ -1,26 +1,26 @@
 {
-  "name": "xxxx/xxxx",
-  "description": "xxxx",
+  "name": "fuwasegu/cache-decoratpr",
+  "description": "A decorator for caching the results of method calls on any instance, supporting pure functions only.",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
-      "name": "xxxx",
-      "email": "xxxx@example.com"
+      "name": "fuwasegu",
+      "email": "contact@fuwasegu.com"
     }
   ],
-  "keywords": ["xxxx"],
+  "keywords": ["PHP", "Cache", "Decoratoro"],
   "require": {
     "php": "^8.1"
   },
   "autoload": {
     "psr-4": {
-      "Xxxx\\Xxxx\\": "src/"
+      "Fuwasegu\\CacheDecorator\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Xxxx\\Xxxx\\Tests\\": "tests/"
+      "Fuwasegu\\CacheDecorator\\Tests\\": "tests/"
     }
   },
   "scripts": {
