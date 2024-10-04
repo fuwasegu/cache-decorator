@@ -79,3 +79,29 @@ class SampleController
     }
 }
 ```
+
+### Supporting multiple cache implementations
+
+The `CacheDecorator::wrap()` method supports both PSR-16 SimpleCache and PSR-6 Cache interfaces. 
+This means you can use either `Psr\SimpleCache\CacheInterface` or `Psr\Cache\CacheItemPoolInterface` implementations as the cache backend.
+
+Example:
+
+```php
+// Using PSR-16 SimpleCache
+$psr16Cache = new SomePsr16CacheImplementation();
+$decorator = CacheDecorator::wrap(new ExpensiveOperation(), $psr16Cache);
+
+// Using PSR-6 Cache
+$psr6Cache = new SomePsr6CacheImplementation();
+$decorator = CacheDecorator::wrap(new ExpensiveOperation(), $psr6Cache);
+```
+
+This flexibility allows you to use the cache implementation that best fits your project's needs.
+
+#### FYI
+
+- [PSR-16 SimpleCache](https://www.php-fig.org/psr/psr-16/)
+- [PSR-16 GitHub](https://github.com/php-fig/simple-cache)
+- [PSR-6 Cache](https://www.php-fig.org/psr/psr-6/)
+- [PSR-6 GitHub](https://github.com/php-fig/cache)
