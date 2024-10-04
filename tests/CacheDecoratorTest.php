@@ -101,6 +101,15 @@ class CacheDecoratorTest extends TestCase
     }
 
     #[Test]
+    public function nonPureMethod(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage(Sample::class . '::addState() is not a pure function, so it is not cacheable.');
+
+        $this->decorator->addState(5);
+    }
+
+    #[Test]
     public function nonExistentMethodThrowsException(): void
     {
         $this->expectException(LogicException::class);
@@ -175,8 +184,13 @@ class Sample
         return [...$a, ...$b];
     }
 
-    public function incrementState(): void
+    public function addState(int $a): void
     {
-        ++$this->state;
+        $this->state = + $a;
+    }
+
+    public function getState(): int
+    {
+        return $this->state;
     }
 }
