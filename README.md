@@ -1,5 +1,8 @@
 # Cache Decorator
 
+[![Coverage Status](https://coveralls.io/repos/github/fuwasegu/cache-decorator/badge.svg?branch=main)](https://coveralls.io/github/fuwasegu/cache-decorator?branch=main)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+
 A PHP library for implementing a cache decorator pattern, allowing easy caching of method results.
 
 ## Requirements

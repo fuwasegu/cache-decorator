@@ -1,5 +1,5 @@
 {
-  "name": "fuwasegu/cache-decoratpr",
+  "name": "fuwasegu/cache-decorator",
   "description": "A decorator for caching the results of method calls on any instance, supporting pure functions only.",
   "type": "library",
   "license": "MIT",
