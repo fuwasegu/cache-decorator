@@ -20,7 +20,9 @@ composer require fuwasegu/cache-decorator
 ## Usage
 
 > [!CAUTION]
-> Since serialization costs can be high, caching should primarily be applied to I/O bottleneck scenarios, such as HTTP communication and relational database interactions. 
+> Since serialization costs can be high, caching should primarily be applied to I/O bottleneck scenarios, 
+> such as HTTP communication and relational database interactions. 
+> 
 > Moreover, the caching driver should utilize lighter options like Redis or Memcached instead of relying on the heavier I/O operations to achieve expected performance improvements.
 
 Here's a basic example of how to use the cache decorator:
@@ -52,6 +54,10 @@ $result2 = $decorator->heavyComputation('test');
 
 Only pure methods can be cached.
 In order to mark a method as pure, use the `#[Pure]` attribute, not the `#[Pure]` attribute provided by PhpStorm.
+
+> [!NOTE]
+> The advantage of this library is that, since CacheDecorator::class internally utilizes Generics and Mixin, 
+> developers can wrap any instance without losing the experience, as the methods of the wrapped instance are still auto-completed in the IDE from the CacheDecorator instance.
 
 ### Especially in Laravel
 
