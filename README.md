@@ -1,63 +1,67 @@
-# fuwasegu/composer-project-template
-Composer プロジェクトのテンプレートです．PHP8.1 以上を想定しています．
-それ以下のバージョンに対応するパッケージを開発する場合は，それぞれの依存ライブラリのバージョンを調節してください．
-このテンプレートには以下の 3 つの開発用ライブラリが含まれています
-- php-cs-fixer (設定項目は yumemi-inc/php-cs-fixer-config を利用)
-  - 自動フォーマッタ
-- phpstan
-  - 静的解析（型検査）ライブラリ
-- phpunit
-  - テストフレームワーク
+# Cache Decorator
 
-また，Coveralls (https://coveralls.io/) を使う前提で，ci も完備しています
-.github/workflows/ci.yml の on を適切に設定してください．
+A PHP library for implementing a cache decorator pattern, allowing easy caching of method results.
 
-# .github/workflows/ci.yml で設定が必要な項目
-## 必須
-- on
+## Requirements
 
-## 任意
-- jobs.build.strategy.matrix.php
-  - 対応する PHP のバージョンに依る
+- PHP 8.1 or higher
 
-## Coveralls （カバレッジ管理サービス）を使わない方
-ci.yml を以下のものに書き換えてください
-```yaml
-name: CI
+## Installation
 
-on: []
+You can install the package via composer:
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php: [8.1, 8.2]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          coverage: xdebug
-      - name: Composer install
-        run: composer install
-      - name: Lint
-        run: composer lint
-      - name: Static Analysis
-        run: composer stan
-      - name: Test
-        run: vendor/bin/phpunit tests/ 
+```bash
+composer require fuwasegu/cache-decorator
 ```
 
-# composer.json で設定が必要な項目
-- name
-- description
-- authors
-- keywords
-- autoload のパス
-- autoload-dev のパス
+## Usage
 
+Here's a basic example of how to use the cache decorator:
+
+```php
+use Fuwasegu\CacheDecorator;
+use Some\CacheImplementation;
+
+class ExpensiveOperation
+{
+    #[Pure]
+    public function heavyComputation($param)
+    {
+        // Some expensive operation
+        sleep(5);
+        return "Result for $param";
+    }
+}
+
+$cacheImplementation = new CacheImplementation();
+$decorator = CacheDecorator::wrap(new ExpensiveOperation(), $cacheImplementation);
+
+// First call will be slow
+$result1 = $decorator->heavyComputation('test');
+
+// Second call will be fast, returning cached result
+$result2 = $decorator->heavyComputation('test');
+```
+
+Only pure methods can be cached.
+In order to mark a method as pure, use the `#[Pure]` attribute, not the `#[Pure]` attribute provided by PhpStorm.
+
+### Especially in Laravel
+
+In Laravel, you can use `Illuminate\Cache\Repository` as the cache implementation.
+
+```php
+class SampleController
+{
+    public function __construct(
+        private Illuminate\Cache\Repository $cache,
+    ) {}
+    
+    public function __index(): Response
+    {
+        $decorator = CacheDecorator::wrap(new ExpensiveOperation(), $this->cache);
+        
+        $result = $decorator->heavyComputation('test');
+    }
+}
+```
