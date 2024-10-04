@@ -13,12 +13,11 @@ use Throwable;
 /**
  * A decorator that caches the result of any instance method
  *
- * @template T
+ * @template T of object
  * @mixin T
  */
 class CacheDecorator
 {
-
     /**
      * @var int Cache duration (seconds)
      */
@@ -53,30 +52,39 @@ class CacheDecorator
     }
 
     /**
-     * @param array<int, mixed> $arguments
+     * @param  array<int, mixed>        $arguments
      * @throws InvalidArgumentException
      */
     public function __call(string $name, array $arguments): mixed
     {
         if (!method_exists($this->instance, $name)) {
-            throw new LogicException("{$name}() does not exist in " . $this->instance::class . ".");
+            throw new LogicException("{$name}() does not exist in " . $this->instance::class . '.');
         }
 
-        // 純粋関数のみサポートする
+        // Only pure functions are supported
         $this->mustPure($this->instance, $name);
 
         $key = $this->generateCacheKey($this->instance::class, $name, $arguments);
 
+        // if ttl is 0, then...
+        // - do not use Cache
+        // - discard existing Cache
+        if ($this->ttl === 0) {
+            $this->cache->delete($key);
+
+            return $this->instance->{$name}(...$arguments);
+        }
+
         $cache = $this->cache->get($key);
 
-        // Cache がヒットしたらそれを返す
+        // If Cache is hit, return it
         if ($cache !== null) {
             return $cache;
         }
 
         $result = $this->instance->{$name}(...$arguments);
 
-        // 結果を Cache する
+        // Cache result
         $this->cache->set($key, $result, $this->ttl);
 
         return $result;
@@ -95,6 +103,9 @@ class CacheDecorator
         return $class . $method . md5($json);
     }
 
+    /**
+     * @param T $instance
+     */
     private function mustPure(mixed $instance, string $method): void
     {
         try {
@@ -107,7 +118,7 @@ class CacheDecorator
                     return;
                 }
             }
-        } catch (Throwable $e) {
+        } catch (Throwable) {
         }
 
         throw new LogicException($this->instance::class . "::{$method}() is not a pure function, so it is not cacheable.");
