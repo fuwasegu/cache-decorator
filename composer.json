@@ -26,7 +26,7 @@
     }
   },
   "scripts": {
-    "test": "vendor/bin/phpunit tests/ --testdox",
+    "test": "XDEBUG_MODE=coverage vendor/bin/phpunit tests/ --testdox",
     "stan": "vendor/bin/phpstan analyse --level=9 --memory-limit=2G src tests",
     "lint": "PHP_CS_FIXER_IGNORE_ENV=true vendor/bin/php-cs-fixer fix --dry-run",
     "lint:fix": "PHP_CS_FIXER_IGNORE_ENV=true vendor/bin/php-cs-fixer fix"
