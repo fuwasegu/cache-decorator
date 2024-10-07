@@ -60,6 +60,21 @@ In order to mark a method as pure, use the `#[Pure]` attribute, not the `#[Pure]
 > The advantage of this library is that, since CacheDecorator::class internally utilizes Generics and Mixin, 
 > developers can wrap any instance without losing the experience, as the methods of the wrapped instance are still auto-completed in the IDE from the CacheDecorator instance.
 
+### Setting TTL globally
+
+CacheDecorator class has a static property `$defaultTtl`, so you can set the default TTL by
+calling `CacheDecorator::setDefaultTtl($ttl)` before wrapping the instance.
+This default value will be used in constructors of CacheDecorator.
+
+```php
+CacheDecorator::setDefaultTtl(3600);
+
+$decorator = CacheDecorator::wrap($someInstance, $cacheImplementation);
+
+// the result will be cached for 3600 seconds.
+$decorator->someMethod();
+```
+
 ### Especially in Laravel
 
 In Laravel, you can use `Illuminate\Cache\Repository` as the cache implementation.

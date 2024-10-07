@@ -133,6 +133,30 @@ class CacheDecoratorTest extends TestCase
     }
 
     #[Test]
+    public function defaultTtlSetting(): void
+    {
+        CacheDecorator::setDefaultTtl(123);
+
+        $key = $this->generateCacheKey(Sample::class, 'sum', [2, 3]);
+
+        $this->cache
+            ->expects($this->once())
+            ->method('get')
+            ->with($key)
+            ->willReturn(null);
+        $this->cache
+            ->expects($this->once())
+            ->method('set')
+            ->with($key, 5, 123);
+
+        /** @var CacheDecorator<Sample> $decorator */
+        $decorator = CacheDecorator::wrap(new Sample(), $this->cache);
+        $result = $decorator->sum(2, 3);
+
+        $this->assertSame(5, $result);
+    }
+
+    #[Test]
     public function zeroTtlBypassesCache(): void
     {
         $key = $this->generateCacheKey(Sample::class, 'sum', [2, 3]);
