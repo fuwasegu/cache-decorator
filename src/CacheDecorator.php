@@ -25,7 +25,12 @@ class CacheDecorator
     /**
      * @var int Cache duration (seconds)
      */
-    private int $ttl = 60;
+    private int $ttl;
+
+    /**
+     * @var int Default cache duration (seconds)
+     */
+    private static int $defaultTtl = 60;
 
     /**
      * @param T $instance The instance to be decorated
@@ -34,6 +39,7 @@ class CacheDecorator
         private readonly mixed $instance,
         private readonly Repository $cache,
     ) {
+        $this->ttl = self::$defaultTtl;
     }
 
     /**
@@ -54,6 +60,16 @@ class CacheDecorator
     }
 
     /**
+     * setter for default ttl
+     */
+    public static function setDefaultTtl(int $ttl): void
+    {
+        self::$defaultTtl = $ttl;
+    }
+
+    /**
+     * setter for ttl
+     *
      * @return self<T>
      */
     public function ttl(int $ttl): self
@@ -103,6 +119,9 @@ class CacheDecorator
     }
 
     /**
+     * Generates a cache key.
+     * The cache key must be unique for each method call.
+     *
      * @param class-string<T>          $class
      * @param array<int|string, mixed> $args
      */
@@ -112,6 +131,8 @@ class CacheDecorator
     }
 
     /**
+     * Check if the method is pure(whether as #[Pure] attribute or not)
+     *
      * @param T $instance
      */
     private function mustPure(mixed $instance, string $method): void
